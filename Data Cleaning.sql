@@ -398,3 +398,42 @@ WHEN currency IS NULL THEN 'Unknown'
 ELSE currency END
 FROM billing
 
+UPDATE billing SET amount = CASE WHEN plan_type = 'Basic'
+AND payment_method = 'paypal' THEN NULL
+ELSE amount END
+WHERE amount <= 0
+
+ALTER TABLE billing
+ALTER COLUMN amount FLOAT NULL
+
+SELECT * FROM billing
+WHERE amount <= 0
+
+SELECT COLUMN_NAME, DATA_TYPE FROM
+INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'billing'
+
+-- CHECKING INVALID FOREIGN KEYS
+SELECT user_id FROM support_tickets WHERE user_id NOT IN (SELECT user_id FROM users)
+
+SELECT * FROM users
+
+ALTER TABLE users ADD first_name VARCHAR(50), last_name VARCHAR(50)
+
+WITH CTE AS (SELECT full_name, CHARINDEX(' ',full_name) -1 AS first_space,
+LEN(full_name) AS [length] FROM users)
+
+SELECT full_name, SUBSTRING(full_name,1,first_space) AS first_name,
+SUBSTRING(full_name,first_space + 2,[length]) AS last_name
+FROM CTE
+WHERE first_space > 0
+
+SELECT * FROM users
+
+UPDATE users SET first_name = CASE WHEN CHARINDEX(' ', full_name) > 0 
+THEN SUBSTRING(full_name, 1, CHARINDEX(' ', full_name) -1) ELSE full_name END
+
+UPDATE users SET last_name = CASE WHEN CHARINDEX(' ', full_name) > 0 
+THEN SUBSTRING(full_name,CHARINDEX(' ', full_name) + 1,LEN(full_name)) ELSE NULL END
+
+ALTER TABLE users
+DROP COLUMN full_name
