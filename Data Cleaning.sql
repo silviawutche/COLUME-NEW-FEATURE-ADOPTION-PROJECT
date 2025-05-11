@@ -377,6 +377,15 @@ WHEN plan_type = 'Pro' AND currency = 'INR' THEN 2775
 WHEN plan_type = 'Enterprise' AND currency = 'INR' THEN 14175
 ELSE amount END 
 
+-- FOR EURO
+SELECT * FROM billing
+WHERE currency = 'EURO' AND plan_type = 'Enterprise'
+
+UPDATE billing SET amount = CASE WHEN plan_type = 'Basic' AND currency = 'EURO' THEN 9.20
+WHEN plan_type = 'Pro' AND currency = 'EURO' THEN 34.04
+WHEN plan_type = 'Enterprise' AND currency = 'EURO' THEN  173.89
+ELSE amount END 
+
 
 -- CLEANING CURRENCY CULUMN
 SELECT DISTINCT currency FROM billing 
