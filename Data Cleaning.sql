@@ -251,6 +251,8 @@ WHERE TABLE_NAME = 'users'
 DROP TABLE sessions
 DROP TABLE users
 
+-- RENAMING THE CLEAN TABLES COLUMNS
+
 EXEC SP_RENAME 'sessions1', 'sessions'
 
 EXEC SP_RENAME 'Clean_users', users
@@ -277,6 +279,7 @@ SELECT * FROM users WHERE user_id IS NULL
 
 ALTER TABLE users
 ALTER COLUMN user_id nvarchar NOT NULL
+
 DROP TABLE check_user
 
 ALTER TABLE  users
@@ -311,11 +314,12 @@ WHERE churn_date < sign_up_date AND churn_date <> sign_up_date
 UPDATE users SET churn_date = sign_up_date
 WHERE churn_date < sign_up_date AND churn_date <> sign_up_date
 
+
+-- CHECKING FOR INVALID CATEGORICAL VALUES
 SELECT DISTINCT status FROM subscriptions
 
 SELECT DISTINCT plan_type FROM users
 
-SELECT plan_type, 
 
 UPDATE users SET plan_type =
 CASE WHEN plan_type = 'Basicc' THEN 'Basic'
@@ -328,21 +332,60 @@ SELECT * FROM subscriptions
 SELECT * FROM billing
 WHERE plan_type = 'Bronze'
 
+
+UPDATE billing SET currency =  CASE WHEN currency = 'XYZ' THEN 'USD' 
+ELSE currency END 
+
 SELECT b.user_id, [plan], plan_type FROM billing b 
 JOIN subscriptions s ON s.user_id = b.user_id
-JOIN users 
+JOIN users u ON u.user_id = b.user_id
 AND plan_type = 'Pro Plus'
 
-SELECT *, 
-
+-- CHECKING FOR CROSS COLUMN LOGICAL VALIDATION
+-- FOR NAIRA
 UPDATE billing SET amount =  CASE WHEN plan_type = 'Basic' AND currency = 'NGN' THEN 15000
 WHEN plan_type = 'Pro' AND currency = 'NGN' THEN 55500
 WHEN plan_type = 'Enterprise' AND currency = 'NGN' THEN  283500
 ELSE amount END 
 
+-- FOR USD
+UPDATE billing SET amount =  CASE WHEN plan_type = 'Basic' AND currency = 'USD' THEN 10
+WHEN plan_type = 'Pro' AND currency = 'USD' THEN 37
+WHEN plan_type = 'Enterprise' AND currency = 'USD' THEN  189
+ELSE amount END 
+
+UPDATE billing SET plan_type = CASE WHEN plan_type = 'USD' AND amount <= 10 THEN 'Basic'
+WHEN plan_type = 'USD' AND amount = 37 THEN 'Pro'
+WHEN plan_type = 'USD' AND amount = 189 THEN  'Enterprise'
+ELSE plan_type END 
+
+-- FOR GBP
 SELECT * from billing
-WHERE plan_type = 'Basic' AND currency = 'NGN' AND amount <> 15000
+WHERE plan_type = 'Enterprise' AND currency = 'GBP'
 
-SELECT * from billing WHERE plan_type = 'Bronze' AND currency = 'NGN'
+UPDATE billing SET amount =  CASE WHEN plan_type = 'Basic' AND currency = 'GBP' THEN 7.5
+WHEN plan_type = 'Pro' AND currency = 'GBP' THEN 27.5
+WHEN plan_type = 'Enterprise' AND currency = 'GPB' THEN  141.75
+ELSE amount END 
 
+-- FOR INR
+SELECT * from billing
+WHERE plan_type = 'Enterprise' AND currency = 'INR'
+
+UPDATE billing SET amount =  CASE WHEN plan_type = 'Basic' AND currency = 'INR' THEN 750
+WHEN plan_type = 'Pro' AND currency = 'INR' THEN 2775
+WHEN plan_type = 'Enterprise' AND currency = 'INR' THEN 14175
+ELSE amount END 
+
+
+-- CLEANING CURRENCY CULUMN
 SELECT DISTINCT currency FROM billing 
+
+UPDATE billing SET currency =
+CASE WHEN currency IN ('USS','XYZ') THEN 'USD'
+WHEN currency IN ('EURo','EUR') THEN 'EURO'
+WHEN currency = 'NGNN' THEN 'NGN'
+WHEN currency IS NULL THEN 'Unknown'
+ELSE currency END
+FROM billing
+
