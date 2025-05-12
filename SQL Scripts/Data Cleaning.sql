@@ -329,8 +329,8 @@ SELECT * FROM users WHERE user_id IS NULL;
 SELECT user_id, COUNT(*) FROM users
 GROUP BY user_id
 HAVING COUNT(*) > 1;
-
--- This block seems like an attempt to ensure user_id is unique before making it a PK,
+-
+-- Ensure user_id is unique before making it a PK,
 -- but it creates a new table 'check_user' with distinct user_ids, which isn't directly used to modify 'users'
 SELECT DISTINCT user_id
 INTO check_user
@@ -559,7 +559,7 @@ WHERE first_space_pos >= 0; -- Ensure there is a space; first_space_pos would be
 SELECT * FROM users;
 
 -- Update 'first_name' column:
--- If a space exists in 'full_name', take the substring before the first space.
+-- If a space exists in 'full_name', take the substring before the first space
 -- Otherwise (no space), 'first_name' becomes the entire 'full_name'.
 UPDATE users SET first_name = CASE
     WHEN CHARINDEX(' ', full_name) > 0
@@ -568,7 +568,7 @@ UPDATE users SET first_name = CASE
 END;
 
 -- Update 'last_name' column:
--- If a space exists in 'full_name', take the substring after the first space.
+-- If a space exists in 'full_name', take the substring after the first space
 -- Otherwise (no space), 'last_name' becomes NULL.
 UPDATE users SET last_name = CASE
     WHEN CHARINDEX(' ', full_name) > 0
