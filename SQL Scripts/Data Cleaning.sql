@@ -59,7 +59,7 @@ SELECT * FROM feedback;
 
 -- Count null values for each specified column in the billing table
 SELECT
-    SUM(CASE WHEN feedback_id IS NULL THEN 1 ELSE 0 END) AS Nulls_in_id, -- This seems to be a copy-paste error, should be billing_id or similar
+    SUM(CASE WHEN billing_id IS NULL THEN 1 ELSE 0 END) AS Nulls_in_id, -- This seems to be a copy-paste error, should be billing_id or similar
     SUM(CASE WHEN user_id IS NULL THEN 1 ELSE 0 END) AS Nulls_in_user,
     SUM(CASE WHEN billing_date IS NULL THEN 1 ELSE 0 END) AS Nulls_in_billingDate,
     SUM(CASE WHEN plan_type IS NULL THEN 1 ELSE 0 END) AS Nulls_in_plan,
