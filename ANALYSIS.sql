@@ -34,8 +34,7 @@ non_adopters AS (
     FROM eligible_users eu 
     LEFT JOIN adopters a ON eu.user_id = a.user_id
     WHERE a.user_id IS NULL
-),
-
+),-
 -- Combine all eligible users and mark their adoption status
 all_users AS (
     SELECT 
@@ -115,6 +114,11 @@ GROUP BY week_diff
 SELECT week_diff, adopter, non_adopter, 
 (adopter - non_adopter) AS percent_diff
 FROM pivoted;
+
+
+
+
+
 
 CREATE VIEW user_weekly AS
 WITH eligible_users AS (

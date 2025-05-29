@@ -313,6 +313,8 @@ DROP TABLE users;
 -- RENAMING THE CLEAN TABLES to their original names
 -- Rename 'sessions1' to 'sessions'
 EXEC SP_RENAME 'sessions1', 'sessions';
+
+
 -- Rename 'Clean_users' to 'users'
 EXEC SP_RENAME 'Clean_users', 'users'; -- Note: SQL Server might require schema qualification for SP_RENAME with tables.
 
